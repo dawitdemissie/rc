@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clean Claim — a revenue cycle challenge</title>
+<meta name="description" content="15 hard questions across the healthcare revenue cycle, from eligibility to collections.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;700;800&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ffffff;
+  --field:#fdf0ef;
+  --rule:#d2332f;
+  --rule-soft:#f1b9b6;
+  --ink:#14213d;
+  --ink-soft:#4a5570;
+  --paid:#1e7a4f;
+  --paid-soft:#e3f2ea;
+  --denied:#b3261e;
+  --focus:#2457c5;
+  --sans:"Libre Franklin",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --type:"Courier Prime","Courier New",Courier,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#16181d;
+    --field:#24191b;
+    --rule:#e8625c;
+    --rule-soft:#5a2c2c;
+    --ink:#e7e9ef;
+    --ink-soft:#a3a9b8;
+    --paid:#5cc591;
+    --paid-soft:#14291f;
+    --denied:#ff7a70;
+    --focus:#8fb0ff;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.5;
+  min-height:100vh;
+}
+.sheet{
+  max-width:760px;
+  margin:0 auto;
+  padding:32px 20px 64px;
+}
+/* ---------- Form header ---------- */
+.formhead{
+  display:grid;
+  grid-template-columns:1fr auto;
+  border:2px solid var(--rule);
+}
+.formhead > div{padding:10px 14px}
+.formhead .title{border-right:2px solid var(--rule)}
+.formhead small{
+  display:block;
+  color:var(--rule);
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.02em;
+}
+.formhead strong{font-size:15px;font-weight:700}
+.formhead .count{font-family:var(--type);font-size:20px;text-align:right}
+
+/* ---------- Intro ---------- */
+.intro{padding:56px 0 24px}
+.intro h1{
+  font-size:clamp(44px,9vw,84px);
+  line-height:.95;
+  letter-spacing:-.03em;
+  font-weight:800;
+  margin:0 0 20px;
+}
+.intro h1 .typed{
+  display:block;
+  font-family:var(--type);
+  font-weight:700;
+  font-size:.42em;
+  letter-spacing:0;
+  color:var(--rule);
+  margin-top:14px;
+}
+.intro p{max-width:56ch;color:var(--ink-soft);margin:0 0 14px}
+.legend{
+  margin:28px 0 32px;
+  border-top:2px solid var(--rule);
+}
+.legend div{
+  display:grid;
+  grid-template-columns:150px 1fr;
+  border-bottom:1px solid var(--rule-soft);
+  padding:8px 0;
+  font-size:15px;
+}
+.legend span:first-child{color:var(--rule);font-weight:700}
+
+/* ---------- Buttons ---------- */
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{
+  background:var(--ink);
+  color:var(--paper);
+  border:0;
+  padding:14px 26px;
+  font-weight:700;
+  font-size:16px;
+  border-radius:2px;
+}
+.btn:hover{background:var(--rule)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.ghost:hover{border-color:var(--rule);color:var(--rule)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+
+/* ---------- Cycle strip ---------- */
+.cycle{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:4px;
+  margin:28px 0 8px;
+}
+.cycle div{
+  border-top:6px solid var(--rule-soft);
+  padding-top:6px;
+  font-size:12px;
+  line-height:1.25;
+  color:var(--ink-soft);
+}
+.cycle div.done{border-top-color:var(--rule)}
+.cycle div.now{border-top-color:var(--ink);color:var(--ink);font-weight:700}
+
+/* ---------- Question box ---------- */
+.box{
+  position:relative;
+  border:2px solid var(--rule);
+  margin-top:20px;
+}
+.box-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid var(--rule);
+  padding:8px 14px;
+  font-size:13px;
+  color:var(--rule);
+  font-weight:500;
+}
+.box-body{padding:22px 20px 24px}
+.question{
+  font-size:20px;
+  line-height:1.45;
+  font-weight:500;
+  margin:0 0 22px;
+  max-width:62ch;
+}
+.options{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.opt{
+  display:grid;
+  grid-template-columns:36px 1fr;
+  align-items:start;
+  width:100%;
+  text-align:left;
+  background:var(--field);
+  border:1px solid var(--rule-soft);
+  padding:12px 14px 12px 10px;
+  border-radius:0;
+  font-size:16px;
+  line-height:1.4;
+}
+.opt .tick{
+  width:22px;height:22px;
+  border:2px solid var(--rule);
+  display:grid;place-items:center;
+  font-family:var(--type);font-weight:700;font-size:18px;
+  margin-top:1px;
+}
+.opt .text{font-family:var(--type);font-size:17px}
+.opt:not([disabled]):hover{border-color:var(--rule)}
+.opt[disabled]{cursor:default}
+.opt.right{background:var(--paid-soft);border-color:var(--paid)}
+.opt.right .tick{border-color:var(--paid);color:var(--paid)}
+.opt.wrong{border-color:var(--denied)}
+.opt.wrong .tick{color:var(--denied);border-color:var(--denied)}
+.opt.faded{opacity:.55}
+
+/* ---------- Stamp (the one loud moment) ---------- */
+.stamp{
+  position:absolute;
+  top:46px; right:18px;
+  font-family:var(--type);
+  font-weight:700;
+  font-size:22px;
+  line-height:1.1;
+  text-align:center;
+  padding:6px 12px;
+  border:3px double currentColor;
+  transform:rotate(-8deg);
+  pointer-events:none;
+  background:var(--paper);
+}
+.stamp small{display:block;font-size:12px;font-weight:400}
+.stamp.paid{color:var(--paid)}
+.stamp.denied{color:var(--denied)}
+.stamp.hit{animation:thud .28s cubic-bezier(.2,1.6,.4,1)}
+@keyframes thud{
+  from{transform:rotate(-14deg) scale(1.7);opacity:0}
+  to{transform:rotate(-8deg) scale(1);opacity:1}
+}
+@media (prefers-reduced-motion:reduce){.stamp.hit{animation:none}}
+
+.remark{
+  margin-top:20px;
+  border-left:4px solid var(--rule);
+  padding:4px 0 4px 14px;
+  max-width:62ch;
+}
+.remark b{display:block;font-size:13px;color:var(--rule);margin-bottom:2px}
+.remark p{margin:0;font-size:16px}
+.actions{margin-top:24px;display:flex;justify-content:flex-end}
+
+/* ---------- Remittance ---------- */
+.ra h2{font-size:clamp(36px,7vw,60px);line-height:1;letter-spacing:-.02em;margin:48px 0 10px;font-weight:800}
+.ra .sub{color:var(--ink-soft);margin:0 0 28px;max-width:56ch}
+.ra-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border:2px solid var(--rule);
+}
+.ra-summary div{padding:10px 14px;border-right:1px solid var(--rule)}
+.ra-summary div:last-child{border-right:0}
+.ra-summary small{display:block;font-size:12px;color:var(--rule)}
+.ra-summary span{font-family:var(--type);font-size:26px;font-weight:700}
+.table-wrap{overflow-x:auto;margin:24px 0 32px}
+table{width:100%;border-collapse:collapse;font-size:15px;min-width:520px}
+th{
+  text-align:left;font-weight:500;font-size:12px;color:var(--rule);
+  border-bottom:2px solid var(--rule);padding:6px 8px;
+}
+td{border-bottom:1px solid var(--rule-soft);padding:8px;vertical-align:top}
+td.mono{font-family:var(--type)}
+td.ok{color:var(--paid);font-weight:700;font-family:var(--type)}
+td.no{color:var(--denied);font-weight:700;font-family:var(--type)}
+.foot{margin-top:40px;font-size:13px;color:var(--ink-soft);max-width:60ch}
+
+[hidden]{display:none!important}
+
+@media (max-width:560px){
+  .sheet{padding:20px 14px 48px}
+  .cycle div{font-size:0}
+  .cycle div.now{font-size:11px}
+  .stamp{position:static;display:inline-block;margin-top:16px;transform:rotate(-4deg)}
+  @keyframes thud{from{transform:rotate(-8deg) scale(1.5);opacity:0}to{transform:rotate(-4deg) scale(1);opacity:1}}
+  .question{font-size:18px}
+  .legend div{grid-template-columns:1fr}
+  .ra-summary span{font-size:20px}
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+
+  <header class="formhead" aria-label="Claim header">
+    <div class="title"><small>Claim type</small><strong>Revenue cycle knowledge check</strong></div>
+    <div class="count"><small>Box</small><span id="boxCount">— / 15</span></div>
+  </header>
+
+  <!-- Intro -->
+  <section id="intro" class="intro">
+    <h1>Clean claim
+      <span class="typed">Can you get it paid on first pass?</span>
+    </h1>
+    <p>Fifteen questions that follow a claim from the front desk to the final patient statement. They lean on real payer rules, edit logic and the metrics finance teams watch every month.</p>
+    <p>Each answer is adjudicated on the spot. Get it right and the box is accepted. Get it wrong and it’s denied, with the reason why.</p>
+
+    <div class="legend" role="list">
+      <div role="listitem"><span>Front end</span><span>Coordination of benefits, MSP, ABNs</span></div>
+      <div role="listitem"><span>Mid-cycle</span><span>Coding edits, payment windows, DNFB</span></div>
+      <div role="listitem"><span>Claims</span><span>Timely filing, corrected claims</span></div>
+      <div role="listitem"><span>Remittance</span><span>CARC group codes, denial rates</span></div>
+      <div role="listitem"><span>Metrics</span><span>Days in A/R, net collection rate</span></div>
+      <div role="listitem"><span>Compliance</span><span>No Surprises Act, 501(r), overpayments</span></div>
+    </div>
+
+    <button class="btn" id="startBtn">Start the claim</button>
+  </section>
+
+  <!-- Quiz -->
+  <section id="quiz" hidden>
+    <div class="cycle" id="cycle" aria-hidden="true"></div>
+
+    <article class="box" aria-live="polite">
+      <div class="box-head"><span id="boxNum"></span><span id="boxStage"></span></div>
+      <div class="box-body">
+        <p class="question" id="qText"></p>
+        <ul class="options" id="options"></ul>
+        <div id="stamp" class="stamp" hidden></div>
+        <div class="remark" id="remark" hidden>
+          <b>Remark</b>
+          <p id="remarkText"></p>
+        </div>
+        <div class="actions"><button class="btn" id="nextBtn" hidden>Next box</button></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- Remittance advice -->
+  <section id="result" class="ra" hidden>
+    <h2 id="raTitle"></h2>
+    <p class="sub" id="raSub"></p>
+    <div class="ra-summary">
+      <div><small>Boxes billed</small><span>15</span></div>
+      <div><small>Accepted</small><span id="raPaid"></span></div>
+      <div><small>Denied</small><span id="raDenied"></span></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Box</th><th>Topic</th><th>Your answer</th><th>Correct answer</th><th>Status</th></tr></thead>
+        <tbody id="raRows"></tbody>
+      </table>
+    </div>
+    <button class="btn" id="restartBtn">Resubmit the claim</button>
+    <p class="foot">Rules reflect US federal requirements and common payer practice. Payer contracts, state law and annual CMS updates can change the details, so check current guidance before applying any of this to live accounts.</p>
+  </section>
+
+</main>
+
+<script>
+const STAGES = ["Front end","Mid-cycle","Claims","Remittance","Metrics","Compliance"];
+
+const QUESTIONS = [
+  {
+    stage:0, topic:"Birthday rule",
+    q:"A 10-year-old is covered under both parents’ employer plans. The parents are married. Mom was born March 3, 1985; Dad was born July 22, 1982. Which plan is primary for the child?",
+    options:["Mom’s plan","Dad’s plan, because he is older","Whichever plan the child was enrolled in first","The plans split the claim 50/50"],
+    answer:0,
+    why:"Under the birthday rule, the parent whose birthday falls earlier in the calendar year is primary. Only month and day count, not birth year, so March 3 beats July 22."
+  },
+  {
+    stage:0, topic:"Medicare Secondary Payer",
+    q:"A 67-year-old patient is still working full time and has coverage through her employer’s group health plan as well as Medicare Part B. The employer has 15 employees. Who pays first?",
+    options:["The group health plan, because she is actively working","Medicare","Whichever plan has the lower deductible","Medicare, but only for Part B services after she retires"],
+    answer:1,
+    why:"For the working aged, the employer plan is primary only when the employer has 20 or more employees. With fewer than 20, Medicare is primary and the group plan is secondary."
+  },
+  {
+    stage:0, topic:"ABN modifiers",
+    q:"A Medicare patient signs a valid Advance Beneficiary Notice for a lab test the provider expects to be denied as not medically necessary. Which modifier goes on the line?",
+    options:["GZ","GX","GA","GY"],
+    answer:2,
+    why:"GA means a required ABN is on file, so the patient can be held liable if Medicare denies. GZ flags an expected denial with no ABN, which leaves the provider liable. GX and GY are for statutorily excluded services."
+  },
+  {
+    stage:1, topic:"3-day payment window",
+    q:"A Medicare patient has an outpatient diagnostic CT at Hospital A on Monday and is admitted as an inpatient to Hospital A on Wednesday. Hospital A is paid under IPPS. How is the CT billed?",
+    options:["Separately on an outpatient (13x) claim","Bundled into the inpatient claim","Separately, because more than 24 hours passed before admission","To the patient, since it fell outside the inpatient stay"],
+    answer:1,
+    why:"The 3-day payment window bundles diagnostic services furnished by the admitting hospital, or an entity it wholly owns or operates, within 3 days before an inpatient admission into the inpatient claim."
+  },
+  {
+    stage:1, topic:"NCCI modifiers",
+    q:"Two procedures that form an NCCI edit pair were performed in the same session but on different organs. Which modifier most precisely supports billing both?",
+    options:["XE","XS","XP","XU"],
+    answer:1,
+    why:"XS means a separate structure or organ. XE is a separate encounter, XP a separate practitioner and XU an unusual non-overlapping service. CMS prefers the specific X modifier over the more general 59."
+  },
+  {
+    stage:1, topic:"DNFB",
+    q:"Your DNFB report jumped from $3.1M to $5.8M in one week. What does that number represent?",
+    options:["Claims denied by payers but not yet appealed","Patient balances not yet sent to collections","Accounts discharged but not yet final billed, often held for coding or documentation","Charges posted after the claim already went out"],
+    answer:2,
+    why:"Discharged Not Final Billed counts accounts where the patient has left but no final claim has dropped. Spikes usually point to coding backlogs, missing documentation or charge holds."
+  },
+  {
+    stage:2, topic:"Medicare timely filing",
+    q:"What is the general timely filing limit for a Medicare fee-for-service claim?",
+    options:["90 days from the date of service","180 days from the date of service","12 months from the date of service","24 months from the date of service"],
+    answer:2,
+    why:"Medicare claims must be filed within one calendar year (12 months) of the date of service. Commercial limits vary by contract and are often much shorter."
+  },
+  {
+    stage:2, topic:"Claim frequency codes",
+    q:"A claim was paid, then you discover the wrong number of units was billed. Which claim frequency code should the corrected claim carry?",
+    options:["1 — Original","5 — Late charge","7 — Replacement of prior claim","8 — Void or cancel"],
+    answer:2,
+    why:"Code 7 replaces the original claim in full and must reference the payer’s original claim number. Sending a new original (code 1) will typically deny as a duplicate."
+  },
+  {
+    stage:3, topic:"CARC group codes",
+    q:"An ERA shows the following adjustments on one line. Which one can be billed to the patient?",
+    options:["CO-45","CO-97","PR-2","OA-23"],
+    answer:2,
+    why:"PR means patient responsibility, and CARC 2 is coinsurance. CO adjustments are contractual obligations the provider writes off, and OA-23 reflects a prior payer’s adjudication."
+  },
+  {
+    stage:3, topic:"Initial denial rate",
+    q:"In March, 2,000 claims were adjudicated. 240 were denied on first pass, and 90 of those were later overturned on appeal. What is the initial denial rate?",
+    options:["4.5%","7.5%","12.0%","16.5%"],
+    answer:2,
+    why:"Initial denial rate is first-pass denials divided by claims adjudicated: 240 ÷ 2,000 = 12%. The 7.5% figure (150 ÷ 2,000) is the final denial rate after overturns."
+  },
+  {
+    stage:3, topic:"Rejection vs. denial",
+    q:"A clearinghouse returns a 277CA saying a claim failed front-end edits for an invalid subscriber ID. What is the correct next step?",
+    options:["File a first-level appeal with the payer","Correct the ID and resubmit as a new original claim","Send a corrected claim with frequency code 7","Write it off as a contractual adjustment"],
+    answer:1,
+    why:"A rejected claim never entered adjudication, so there is nothing to appeal or replace. Fix the data and send it again as an original claim, inside timely filing."
+  },
+  {
+    stage:4, topic:"Days in A/R",
+    q:"Gross A/R is $4.5M. Gross charges over the last 90 days were $13.5M. What is days in A/R?",
+    options:["30 days","33 days","45 days","90 days"],
+    answer:0,
+    why:"Average daily charges are $13.5M ÷ 90 = $150,000. Days in A/R is $4.5M ÷ $150,000 = 30 days."
+  },
+  {
+    stage:4, topic:"Net collection rate",
+    q:"Charges are $1,000. The contracted allowed amount is $600. The payer pays $480, the patient pays $60, and the remaining $60 goes to bad debt. What is the net collection rate?",
+    options:["54%","80%","90%","100%"],
+    answer:2,
+    why:"Net collection rate is payments ÷ (charges − contractual adjustments): $540 ÷ $600 = 90%. Bad debt counts against you, contractual write-offs do not. 54% is the gross collection rate."
+  },
+  {
+    stage:5, topic:"No Surprises Act",
+    q:"An uninsured patient received a Good Faith Estimate. The final bill from that provider must exceed the estimate by at least how much before the patient can start patient-provider dispute resolution?",
+    options:["$100","$250","$400","10% of the estimate"],
+    answer:2,
+    why:"Self-pay and uninsured patients can dispute a bill that is at least $400 more than the Good Faith Estimate for that provider or facility."
+  },
+  {
+    stage:5, topic:"501(r) collections",
+    q:"Under IRS section 501(r), what is the earliest a nonprofit hospital can start an extraordinary collection action, such as credit reporting, after the first post-discharge billing statement?",
+    options:["30 days","60 days","120 days","240 days"],
+    answer:2,
+    why:"The notification period is 120 days, and the hospital must give at least 30 days’ written notice before an ECA. The 240-day figure is the window for accepting financial assistance applications."
+  }
+];
+
+const $ = id => document.getElementById(id);
+let order = [], idx = 0, picks = [];
+
+function shuffle(a){
+  const b = a.slice();
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+
+function start(){
+  // Questions stay in cycle order; options shuffle each attempt.
+  order = QUESTIONS.map(q => ({...q, shuffled: shuffle(q.options.map((t,i)=>({t,i})))}));
+  idx = 0; picks = [];
+  $("intro").hidden = true;
+  $("result").hidden = true;
+  $("quiz").hidden = false;
+  render();
+}
+
+function renderCycle(stage){
+  $("cycle").innerHTML = STAGES.map((s,i)=>
+    `<div class="${i<stage?'done':i===stage?'now':''}">${s}</div>`).join("");
+}
+
+function render(){
+  const q = order[idx];
+  renderCycle(q.stage);
+  $("boxCount").textContent = `${idx+1} / 15`;
+  $("boxNum").textContent = `Box ${idx+1} — ${q.topic}`;
+  $("boxStage").textContent = STAGES[q.stage];
+  $("qText").textContent = q.q;
+  $("stamp").hidden = true;
+  $("stamp").className = "stamp";
+  $("remark").hidden = true;
+  $("nextBtn").hidden = true;
+  const letters = "ABCD";
+  $("options").innerHTML = "";
+  q.shuffled.forEach((o,k)=>{
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.dataset.orig = o.i;
+    b.innerHTML = `<span class="tick" aria-hidden="true"></span><span class="text">${letters[k]}. ${o.t}</span>`;
+    b.addEventListener("click", ()=>choose(o.i, b));
+    li.appendChild(b);
+    $("options").appendChild(li);
+  });
+  $("options").querySelector("button").focus({preventScroll:true});
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function choose(orig, btn){
+  const q = order[idx];
+  const ok = orig === q.answer;
+  picks.push({pick:orig, ok});
+  document.querySelectorAll(".opt").forEach(b=>{
+    b.disabled = true;
+    const o = +b.dataset.orig;
+    if(o === q.answer){ b.classList.add("right"); b.querySelector(".tick").textContent = "✓"; }
+    else if(b === btn){ b.classList.add("wrong"); b.querySelector(".tick").textContent = "×"; }
+    else b.classList.add("faded");
+  });
+  const st = $("stamp");
+  st.innerHTML = ok ? "Accepted<small>clean on first pass</small>" : "Denied<small>see remark</small>";
+  st.className = "stamp " + (ok ? "paid" : "denied");
+  st.hidden = false;
+  void st.offsetWidth; st.classList.add("hit");
+  $("remarkText").textContent = q.why;
+  $("remark").hidden = false;
+  const nb = $("nextBtn");
+  nb.textContent = idx === order.length-1 ? "See the remittance" : "Next box";
+  nb.hidden = false;
+  nb.focus({preventScroll:true});
+}
+
+function next(){
+  idx++;
+  if(idx < order.length) render(); else finish();
+}
+
+function finish(){
+  $("quiz").hidden = true;
+  $("result").hidden = false;
+  $("boxCount").textContent = "15 / 15";
+  const paid = picks.filter(p=>p.ok).length;
+  let title, sub;
+  if(paid === 15){ title = "Paid in full"; sub = "Every box cleared. You could run a revenue integrity team."; }
+  else if(paid >= 12){ title = "Paid"; sub = "A few line-level adjustments, but this claim got through. Strong command of the cycle."; }
+  else if(paid >= 8){ title = "Partially paid"; sub = "Solid in places, with gaps a payer would find. Review the denied boxes below and resubmit."; }
+  else { title = "Denied"; sub = "This one goes back to the work queue. The remarks below explain each rule — read them and try again."; }
+  $("raTitle").textContent = title;
+  $("raSub").textContent = sub;
+  $("raPaid").textContent = paid;
+  $("raDenied").textContent = 15 - paid;
+  $("raRows").innerHTML = order.map((q,i)=>`
+    <tr>
+      <td class="mono">${i+1}</td>
+      <td>${q.topic}</td>
+      <td class="mono">${q.options[picks[i].pick]}</td>
+      <td class="mono">${q.options[q.answer]}</td>
+      <td class="${picks[i].ok?'ok':'no'}">${picks[i].ok?'Accepted':'Denied'}</td>
+    </tr>`).join("");
+  window.scrollTo({top:0,behavior:"smooth"});
+  $("restartBtn").focus({preventScroll:true});
+}
+
+$("startBtn").addEventListener("click", start);
+$("nextBtn").addEventListener("click", next);
+$("restartBtn").addEventListener("click", start);
+</script>
+</body>
+</html>
