@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Revenue Cycle: CPA-Level Case Questions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --ink:#16212B; --muted:#5A6873; --rule:#CCD6D2;
+  --accent:#1D6A51; --accent-soft:#E2F0EA; --wrong:#A3332B; --wrong-soft:#F8E6E4;
+  --serif:"Literata", Georgia, "Times New Roman", serif;
+  --sans:"Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#11181D; --surface:#182229; --ink:#E6ECEA; --muted:#9AA8B0; --rule:#2C3A41;
+    --accent:#5CC49C; --accent-soft:#18352B; --wrong:#F08A80; --wrong-soft:#3A2020; color-scheme:dark; }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header.intro{padding:56px 0 28px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,4.5vw,2.6rem);line-height:1.15;margin:0 0 12px}
+.intro p{color:var(--muted);margin:0;max-width:60ch}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--rule);
+  padding-top:env(safe-area-inset-top,0px)}
+.bar .wrap{display:flex;align-items:center;gap:16px;padding-top:12px;padding-bottom:12px}
+.score{font-variant-numeric:tabular-nums;font-weight:600}
+.score span{color:var(--muted);font-weight:400}
+.track{flex:1;height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+button{font:inherit;cursor:pointer}
+.reset{background:none;border:1px solid var(--rule);color:var(--ink);border-radius:6px;padding:6px 12px;font-size:.9rem}
+.reset:hover{border-color:var(--muted)}
+ol.cases{list-style:none;margin:0;padding:24px 0 64px}
+.case{display:grid;grid-template-columns:56px 1fr;gap:0 16px;padding:28px 0;border-bottom:1px solid var(--rule)}
+.num{font-family:var(--serif);font-size:2rem;line-height:1;color:var(--muted);font-variant-numeric:lining-nums tabular-nums;
+  border-right:2px solid var(--rule);padding-right:12px;text-align:right;height:fit-content}
+.case.right .num{color:var(--accent);border-color:var(--accent)}
+.case.wrong .num{color:var(--wrong);border-color:var(--wrong)}
+.prompt{font-family:var(--serif);font-size:1.08rem;line-height:1.65;margin:0 0 16px;max-width:66ch}
+.opts{display:grid;gap:8px}
+.opt{display:grid;grid-template-columns:28px 1fr;align-items:start;text-align:left;width:100%;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:8px;padding:11px 14px;font-size:.97rem}
+.opt b{font-weight:700;color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:var(--accent);background:var(--accent-soft)}
+.opt.correct b{color:var(--accent)}
+.opt.picked-wrong{border-color:var(--wrong);background:var(--wrong-soft)}
+.opt.picked-wrong b{color:var(--wrong)}
+.opt.dim{opacity:.55}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hintbtn{margin-top:12px;background:none;border:none;color:var(--accent);padding:0;font-size:.9rem;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.hint{margin:8px 0 0;color:var(--muted);font-size:.93rem}
+.verdict{margin-top:16px;padding:14px 16px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 8px 8px 0}
+.case.wrong .verdict{border-color:var(--wrong)}
+.verdict strong{display:block;margin-bottom:4px}
+.verdict p{margin:0;font-size:.95rem;max-width:66ch}
+.done{padding:32px 0 72px;font-family:var(--serif);font-size:1.25rem}
+@media (max-width:540px){
+  .case{grid-template-columns:1fr}
+  .num{border-right:none;border-bottom:2px solid var(--rule);text-align:left;padding:0 0 6px;margin-bottom:12px;width:fit-content;font-size:1.5rem}
+}
+@media (prefers-reduced-motion:reduce){.track i{transition:none}}
+</style>
+</head>
+<body>
+<header class="wrap intro">
+  <h1>The Revenue Cycle: CPA-level case questions</h1>
+  <p>Twenty cases on sales order entry, shipping, billing, and cash collections. Pick an answer to see whether you’re right and why. Answers lock once chosen.</p>
+</header>
+<div class="bar"><div class="wrap">
+  <div class="score" id="score">0 / 0 <span>answered 0 of 20</span></div>
+  <div class="track" aria-hidden="true"><i id="fill"></i></div>
+  <button class="reset" id="reset">Start over</button>
+</div></div>
+<main class="wrap">
+  <ol class="cases" id="cases"></ol>
+  <p class="done" id="done" hidden></p>
+</main>
+<script>
+const QS = [{"q": "Northbrook Supply’s sales reps can override the system’s credit check when a ‘good customer’ places a large order. A rep overrode the check for a $180,000 order, and the customer later filed for bankruptcy. Which control would most directly have prevented this loss?", "o": ["Data entry edit controls that validate the customer number against the customer master file", "Credit limits enforced by the system, with orders over the limit requiring specific authorization from someone independent of sales", "Reconciling the picking list to the sales order before shipment", "Sending monthly statements to all customers"], "a": 1, "h": "Ask who should be allowed to approve credit beyond the limit.", "e": "The threat is uncollectible accounts. The control is a credit limit check, where any sale over the limit needs specific authorization. That approval must come from someone independent of sales (the credit function), because sales staff are rewarded for volume and are not neutral. An edit check confirms the customer exists, not that the customer can pay."}, {"q": "Ridgeway Corp. received and approved a customer order on December 30, checked inventory availability, and confirmed the order. The goods shipped January 3 (FOB shipping point). Which general ledger entry should Ridgeway record on December 30?", "o": ["Dr Accounts Receivable, Cr Sales Revenue", "Dr Cost of Goods Sold, Cr Inventory", "Dr Accounts Receivable, Cr Unearned Revenue", "No general ledger entry; the sales order affects no GL accounts"], "a": 3, "h": "Has anything left the warehouse yet?", "e": "Sales order entry collects information about the customer, credit, and inventory availability, but no GL accounts are affected at this stage. Inventory and cost of sales are first affected when goods ship on January 3, and the receivable and revenue are recorded at billing. Recording revenue on December 30 would be a cutoff error that overstates the year’s sales."}, {"q": "At Halvorsen Distributors, one employee prepares shipping documents and also generates customer invoices. Internal audit found he shipped goods to an accomplice’s company and never generated invoices for those shipments. Which control would best have PREVENTED this scheme?", "o": ["Separating the shipping and billing functions", "Reconciling the AR subsidiary ledger to the GL control account", "Using bar code technology in the warehouse", "Configuring the system to enter prices automatically"], "a": 0, "h": "The fraud relied on one person controlling two linked steps.", "e": "The threat is failure to bill the customer. Separating shipping from billing prevents one person from both releasing goods and controlling whether an invoice is created. Reconciling invoices to shipping documents is the matching detective control. Reconciling AR to the GL would not catch it, because an invoice never created never reaches either ledger."}, {"q": "A shipment from Castell Manufacturing was damaged in transit, and Castell and the freight company now disagree about who is responsible. Which document establishes the carrier’s legal responsibility for the goods?", "o": ["Packing slip", "Picking ticket", "Bill of lading", "Sales invoice"], "a": 2, "h": "Which document is a contract with a third party?", "e": "The bill of lading is the legal contract that transfers custody of the goods to the carrier and defines the carrier’s responsibility. The packing slip lists the contents of the shipment for the customer. The picking ticket authorizes warehouse release, and the invoice bills the customer. None of those binds the carrier."}, {"q": "An auditor is testing whether warehouse staff release inventory only with proper authorization. Which document should the auditor expect to find supporting each release of goods from the warehouse?", "o": ["Bill of lading", "Picking ticket", "Remittance advice", "Credit memo"], "a": 1, "h": "This document is generated from the approved sales order.", "e": "The picking ticket is generated from the approved sales order and authorizes the warehouse to remove specific items and quantities from inventory. Reconciling the picking list to the sales order is also the control against picking the wrong item or quantity. The bill of lading comes later, at the point of shipment."}, {"q": "At month-end, Talbot Inc.’s accounts receivable GL control account shows $1,265,000, while the customer subsidiary ledger totals $1,240,000. Which error would explain the $25,000 difference?", "o": ["A $25,000 credit sale was posted to the customer’s subsidiary account but not to the GL", "A $25,000 customer payment was posted to the wrong customer’s subsidiary account", "A $25,000 credit memo was posted to the GL but not to the subsidiary ledger", "A $25,000 customer payment was posted to the customer’s subsidiary account but not to the GL"], "a": 3, "h": "Work out which direction each error moves each ledger.", "e": "If a payment reduced the subsidiary ledger but not the GL, the GL stays $25,000 higher, which matches the facts. Option A would make the subsidiary higher than the GL. Option C would make the GL lower. Option B leaves both totals unchanged, so the reconciliation would not reveal it. That is why the subsidiary-to-GL reconciliation catches posting errors but not misapplied payments."}, {"q": "At Pell & Grant, the AR clerk opens customer payments, posts them to customer accounts, and can issue credit memos for ‘returned goods.’ Write-offs through credit memos have tripled with no increase in returns. Which control best addresses this threat?", "o": ["Data entry edit controls on the credit memo amount field", "Reconciling the bank statement monthly", "Separating the authorization of credit memos from the recording of customer payments and cash handling", "Using cycle billing"], "a": 2, "h": "How does an unauthorized credit memo hide a theft?", "e": "The threat is inaccurate or invalid credit memos used to conceal stolen cash: the clerk takes the payment and then ‘credits’ the customer’s account. The control is to separate credit memo authorization from recording and cash handling, ideally with receiving-department confirmation that goods were actually returned. Edit checks cannot tell a valid memo from a fraudulent one."}, {"q": "The CFO of Brennan Foods has two concerns: (1) employees handling customer checks could steal them, and (2) checks take several days to reach the company and be deposited, which strains cash flow. Which single control addresses BOTH concerns?", "o": ["A lockbox arrangement with the bank", "Offering discounts for early payment", "A cash flow budget", "Depositing all cash receipts daily"], "a": 0, "h": "Which control appears under both cash collection threats?", "e": "With a lockbox, customers mail payments directly to the bank. Employees never handle the checks, which reduces theft risk, and the funds are deposited faster, which reduces float and helps cash flow. Early-payment discounts and cash budgeting address cash flow only. Daily deposits reduce theft exposure but still leave employees handling the checks."}, {"q": "Kessler Industries’ large customers now pay by electronic funds transfer, but the AR department struggles to apply payments because the remittance details (which invoices are being paid) arrive separately and late. What is the best solution?", "o": ["Switch to the balance-forward method", "Financial electronic data interchange (FEDI)", "A traditional lockbox", "Universal payment identification code (UPIC)"], "a": 1, "h": "Look for the option that combines payment and remittance data.", "e": "FEDI integrates EFT with EDI, so the payment and its remittance data travel together, and AR can match payments to invoices automatically. A UPIC protects bank account details but does not carry remittance data. Switching to balance-forward would lose invoice-level tracking that business customers usually need."}, {"q": "Ashford Co. wants customers to pay electronically, but its treasurer worries that publishing the company’s actual bank account and routing numbers on invoices creates fraud risk. What should Ashford use?", "o": ["Electronic lockbox", "Remittance list", "Cycle billing", "Universal payment identification code (UPIC)"], "a": 3, "h": "Think of a substitute identifier for the account number.", "e": "A UPIC is a unique number that lets customers send electronic payments to a company without the company revealing its actual bank account number. An electronic lockbox speeds up processing but does not hide account details."}, {"q": "Delmar Wholesale sells to business customers who pay specific invoices, often taking a 2% early-payment discount on some invoices but not others. Which AR method best fits this situation?", "o": ["Open-invoice method", "Balance-forward method", "Cycle billing", "Monthly statement method"], "a": 0, "h": "Customers here pay invoice by invoice.", "e": "Under the open-invoice method, customers pay according to individual invoices, so discounts and disputes can be tracked per invoice. This is typical in B2B. The balance-forward method applies payments to the total outstanding balance, which suits retail and utility customers. Cycle billing is a billing schedule, not an AR method."}, {"q": "A regional utility with 400,000 customers sends all bills on the last day of the month. The billing staff work heavy overtime every month-end while being underused the rest of the month. What should the utility adopt?", "o": ["Open-invoice method", "Electronic funds transfer", "Cycle billing", "An accounts receivable aging report"], "a": 2, "h": "The problem is how work is spread across the month.", "e": "Cycle billing divides customers into groups and sends monthly statements to each group on a different day of the month. That spreads the billing workload, and the incoming cash, more evenly across the month."}, {"q": "Two mailroom employees open the mail together and prepare a remittance list. The list goes to accounts receivable, and the checks go to the cashier for deposit. If the cashier steals one check, which procedure detects it most directly?", "o": ["Reconciling the AR subsidiary ledger to the GL control account", "Comparing the remittance list total with the bank-validated deposit slip, done by someone independent of the cashier", "Sending monthly statements to customers", "Restricting access to the customer master file"], "a": 1, "h": "What independent record exists of what should have been deposited?", "e": "The remittance list is an independent record of what was received, created before the cashier touches the checks. If it is compared with the bank-validated deposit, the shortfall shows up right away. AR would post the full remittance list, so the subsidiary ledger and GL would agree and option A would find nothing. Customer statements would show the payment as received, so they would not help either."}, {"q": "A customer complains that a payment mailed three weeks ago does not appear on her statement. Two weeks later it appears, but another customer then reports the same problem. The AR clerk handles incoming checks and posts to customer accounts. What is the most likely scheme, and what is the key control?", "o": ["Billing errors; configure the system to enter prices automatically", "Lapping; separate cash handling from posting to customer accounts", "Posting errors; reconcile the subsidiary ledger to the GL", "Cash flow problems; use discounts for early payment"], "a": 1, "h": "Payments are being applied late, one account after another.", "e": "This pattern is lapping: the clerk steals one customer’s payment and covers it with a later customer’s payment, which creates a rolling delay. The primary control is segregating cash handling from posting to customer accounts, authorizing credit memos, and reconciling the bank account. Monthly statements reviewed by someone independent help detect it, which is how this complaint surfaced."}, {"q": "At Orion Parts, sales reps can edit the ship-to address in the customer master file. A rep changed a major customer’s address to a warehouse he controlled, received three shipments, and changed it back. Which control would most directly have prevented this?", "o": ["Data entry edit controls on the sales order form", "Reconciling picking lists to sales orders", "Physical inventory counts", "Restricting access to master data, with changes to master files authorized and logged"], "a": 3, "h": "The weakness was in who could change a master file, not in how orders were entered.", "e": "Restricting access to master data maintains its accuracy and integrity. Sales reps should not be able to change customer master records. Edit controls only check the format and validity of data entered, so a fraudulent but valid-looking address would pass. Picking lists matched the orders, so that reconciliation would not catch it either."}, {"q": "Billing clerks at Vance Electrical type prices into invoices from a printed price list. A customer audit found frequent overbilling caused by transposed digits and outdated prices. Which control best addresses this threat?", "o": ["Configure the system to enter prices automatically from the price master file", "Separate the shipping and billing functions", "Reconcile invoices with sales orders and shipping documents", "Send monthly statements to customers"], "a": 0, "h": "Eliminate the manual step that causes the errors.", "e": "The threat is billing errors. Having the system pull prices from a controlled price master file removes manual keying errors and outdated prices at the source. Reconciling to shipping documents confirms quantities and items, but those documents do not show the correct price."}, {"q": "Merritt Co.’s perpetual system shows 300 units of a popular item available, so sales reps keep confirming orders. When the warehouse goes to pick them, the bin is empty, and customers cancel. Which control most directly detects this kind of discrepancy?", "o": ["Credit limit checks", "Bar code scanning at shipping", "Physical inventory counts reconciled to the perpetual records", "Reconciling shipping documents to sales orders"], "a": 2, "h": "How do you find out the records disagree with reality?", "e": "Physical counts reconciled to recorded quantities detect differences between the records and what is actually on hand, whether from theft, errors, or unrecorded transfers. This addresses both stockouts and possible theft. A perpetual system is only as reliable as its periodic checks against physical reality."}, {"q": "An internal auditor at Lowell Brands suspects some approved customer orders were never shipped, which damages customer relationships. Which procedure would best identify these orders?", "o": ["Reconcile the AR subsidiary ledger to the GL control account", "Reconcile approved sales orders to shipping documents (picking lists, packing slips, bills of lading)", "Review the accounts receivable aging report", "Compare the remittance list to the deposit slip"], "a": 1, "h": "Start from the orders and look for what’s missing.", "e": "The threat is failure to ship goods. Reconciling sales orders to shipping documents finds approved orders with no matching shipment. If goods never shipped, AR and aging records may not reflect them at all, so ledger-based procedures would miss the problem."}, {"q": "Sterling Supply receives orders from customers over EDI. A customer refuses to pay for a $60,000 shipment, claiming it never placed the order. Which control would have best protected Sterling?", "o": ["Credit limit checks", "Reconciling the picking list to the sales order", "Restricting physical access to inventory", "Requiring a customer signature (a digital signature for electronic orders) to authorize the sale"], "a": 3, "h": "The issue is proving who authorized the order.", "e": "The threat is invalid orders. A signature, or a digital signature for EDI and online orders, authenticates the customer and provides non-repudiation, so the customer cannot credibly deny placing the order. A credit check confirms the customer can pay, not that the customer actually ordered."}, {"q": "Ferris Co.’s controller wants to decide whether to extend more credit to a long-time customer and how much allowance for doubtful accounts to record. Which report gives the most directly relevant information?", "o": ["Accounts receivable aging report", "Remittance list", "Cash flow budget", "Back order report"], "a": 0, "h": "Which report shows how long amounts have been outstanding?", "e": "The AR aging report groups customer balances by how long they have been outstanding. That shows the customer’s payment behavior, which informs the credit decision, and supports estimating the allowance for doubtful accounts. A cash flow budget projects inflows and outflows but does not assess individual customers."}];
+const L = "ABCD";
+let answered = 0, correct = 0;
+const list = document.getElementById("cases");
+
+function render(){
+  answered = 0; correct = 0; list.innerHTML = "";
+  document.getElementById("done").hidden = true;
+  QS.forEach((q, i) => {
+    const li = document.createElement("li");
+    li.className = "case";
+    li.innerHTML = `<div class="num">${i+1}</div><div>
+      <p class="prompt"></p><div class="opts"></div>
+      <button class="hintbtn" type="button">Show hint</button><p class="hint" hidden></p></div>`;
+    li.querySelector(".prompt").textContent = q.q;
+    const hint = li.querySelector(".hint"); hint.textContent = q.h;
+    const hb = li.querySelector(".hintbtn");
+    hb.onclick = () => { hint.hidden = !hint.hidden; hb.textContent = hint.hidden ? "Show hint" : "Hide hint"; };
+    const opts = li.querySelector(".opts");
+    q.o.forEach((t, j) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "opt";
+      b.innerHTML = `<b>${L[j]}</b><span></span>`;
+      b.querySelector("span").textContent = t;
+      b.onclick = () => choose(li, q, j);
+      opts.appendChild(b);
+    });
+    list.appendChild(li);
+  });
+  update();
+}
+
+function choose(li, q, j){
+  const btns = li.querySelectorAll(".opt");
+  btns.forEach((b, k) => {
+    b.disabled = true;
+    if (k === q.a) b.classList.add("correct");
+    else if (k === j) b.classList.add("picked-wrong");
+    else b.classList.add("dim");
+  });
+  const ok = j === q.a;
+  answered++; if (ok) correct++;
+  li.classList.add(ok ? "right" : "wrong");
+  li.querySelector(".hintbtn").hidden = true;
+  li.querySelector(".hint").hidden = true;
+  const v = document.createElement("div");
+  v.className = "verdict"; v.setAttribute("role", "status");
+  v.innerHTML = `<strong></strong><p></p>`;
+  v.querySelector("strong").textContent = ok ? "Correct." : `Not quite. The answer is ${L[q.a]}.`;
+  v.querySelector("p").textContent = q.e;
+  li.querySelector(".opts").after(v);
+  update();
+}
+
+function update(){
+  document.getElementById("score").innerHTML =
+    `${correct} / ${answered} <span>answered ${answered} of ${QS.length}</span>`;
+  document.getElementById("fill").style.width = (answered / QS.length * 100) + "%";
+  if (answered === QS.length){
+    const d = document.getElementById("done");
+    const pct = Math.round(correct / QS.length * 100);
+    d.textContent = `You scored ${correct} out of ${QS.length} (${pct}%). Review the cases marked in red, then select Start over to try again.`;
+    d.hidden = false;
+  }
+}
+
+document.getElementById("reset").onclick = () => { render(); window.scrollTo({top:0}); };
+render();
+</script>
+</body>
+</html>
